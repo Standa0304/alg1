@@ -1,7 +1,40 @@
-﻿#include <iostream>
+#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <random>
+#include <chrono>
+
+void selectionSort(std::vector<int>& pole) {
+    int min = 0;
+    int pom = 0;
+
+    for (size_t i = 0; i < pole.size() - 1; i++) {
+        min = pole[i];
+        for (size_t j = i + 1; j < pole.size(); j++) {
+            if (pole[j] < min) {
+                pom = pole[j];
+                pole[j] = min;
+                min = pom;
+            }
+            pole[i] = min;
+        }
+    }
+}
+
+void bubbleSort(std::vector<int>& pole) {
+    int pom2 = 0;
+
+    for (size_t i = 0; i < pole.size() - 1; i++) {
+        for (size_t j = 0; j < pole.size() - 1; j++) {
+            if (pole[j] > pole[j + 1]) {
+                pom2 = pole[j];
+                pole[j] = pole[j + 1];
+                pole[j + 1] = pom2;
+            }
+        }
+    }
+}
+
 
 void Leftto(std::vector<int>& pole, int& left, int& right) {
     int j = 0;
@@ -56,18 +89,34 @@ std::vector<int> generate(int lenght, int minVal, int maxVal) {
 int main() {
 
     std::vector<int> pole = generate(10, 0, 100);
+
     std::cout << "před" << std::endl;
     for (int i = 0; i < pole.size(); i++) {
         std::cout << pole[i] << " ";
     }
+
+    auto start = std::chrono::high_resolution_clock::now();
     shaker(pole);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    std::cout << "Time: " << duration.count() << " sec" << std::endl;
+
     std::cout << "po" << std::endl;
     for (int i = 0; i < pole.size(); i++) {
         std::cout << pole[i] << " ";
     }
-    std::cout << "konec" << std::endl;
 
+    auto star = std::chrono::high_resolution_clock::now();
+    bubbleSort(pole);
+    auto en = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duratio = en - star;
+    std::cout << "Time: " << duratio.count() << " sec" << std::endl;
 
+    auto sta = std::chrono::high_resolution_clock::now();
+    selectionSort(pole);
+    auto e = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> durati = e - sta;
+    std::cout << "Time: " << durati.count() << " sec" << std::endl;
 
     return 0;
 }
@@ -81,3 +130,15 @@ int main() {
 // T(0) = 5*5*5*5*1
 
 //T(n) = 5^n
+
+
+/*    std::cout << "před" << std::endl;
+    for (int i = 0; i < pole.size(); i++) {
+        std::cout << pole[i] << " ";
+    }
+    shaker(pole);
+    std::cout << "po" << std::endl;
+    for (int i = 0; i < pole.size(); i++) {
+        std::cout << pole[i] << " ";
+    }
+    std::cout << "konec" << std::endl;*/
