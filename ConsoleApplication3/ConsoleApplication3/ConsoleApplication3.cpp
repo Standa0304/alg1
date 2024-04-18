@@ -1,70 +1,80 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <limits>
-#include <chrono>
-#include <random>
+#include <stack>
+#include <unordered_set>
 
 using namespace std;
 
-int assignmentProblem(const vector<vector<int>>& costMatrix) {
-    int n = costMatrix.size();
-    int minCost = numeric_limits<int>::max();
-    vector<int> assignment(n);
+vector<vector < vector<int>>> getNext(vector<vector<int>> zac) {
+   vector< vector < vector<int>>> next(4);
+    
+    for (int i = 0; i < zac.size(); ++i) {
+        for (int j = 0; j < zac[i].size(); ++j) {
+            if (zac[i][j] == 0) {
+                int r = i;
+                int s = j;
 
-    for (int i = 0; i < n; ++i) {
-        assignment[i] = i;
-    }
-    // todo loop over all assignments==permutations and find minimum 
+                const int dx[] = { -1, 1, 0, 0 };
+                const int dy[] = { 0, 0, -1, 1 };
 
-    while (next_permutation(assignment.begin(), assignment.end())); {
-        int cost = 0;
-        for (int i = 0; i < assignment.size(); ++i) {
-            cost += costMatrix[i][assignment[i]];
-        }
-        if (cost < minCost) {
-            minCost = cost;
-        }
-    }
+                for (int k = 0; k < 4; ++k) {
+                    int newRow = r + dx[k];
+                    int newCol = s + dy[k];
+                    if (newRow >= 0 && newRow < 3 && newCol >= 0 && newCol < 3) {
+                        swap(zac[r][s], zac[newRow][newCol]);
+                        next[k] = zac;
+                    }
+                }
 
-    return minCost;
-}
-
-vector<vector<int>> generateMatrix(int n, int minVal, int maxVal) {
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<int> distribution(minVal, maxVal);
-
-    vector<vector<int>> result(n, vector<int>(n));
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            result[i][j] = distribution(gen);
+                return next;
+            }
         }
     }
 
-    return result;
+bool depthsearch(vector<vector<int>> zac) {
+    stack<vector<vector<int>>> stack;
+    unordered_set<vector<vector<int>>, hash<vector<vector<int>>>> visited;
+    vector<vector<int>> cil = { {0, 2, 3}, {4, 5, 6}, {7, 8, 9} };
+
+    stack.push(zac);
+    visited.insert(zac);
+
+    if (stack.empty()) {
+        printf("Není řešení");
+        return false;
+    }
+    else {
+        if (zac == cil) {
+            for (int i = 0; i < cil.size(); i++) {
+                for (int j = 0; j < cil[1].size(); j++) {
+                    cout << zac[i][j];
+                }
+                cout << "\n";
+            }
+        }
+        else {
+            vector<vector<int>> next = getNext(zac);
+
+
+            stack.push(next);
+            visited.insert(next);
+        }
+    }
+
+
 }
 
 int main()
 {
-    vector<vector<int>> testCostMatrix = {
-        {9, 2, 7, 8},
-        {6, 4, 3, 7},
-        {5, 8, 1, 8},
-        {7, 6, 9, 4}
-    };
+    vector<vector<int>> zac = { {2, 3, 4}, {0, 5, 7}, {8, 6, 9}};
 
-    vector<vector<int>> bigCostMatrix = generateMatrix(13, 0, 100);
 
-    auto star = std::chrono::high_resolution_clock::now();
-    int vys = assignmentProblem(bigCostMatrix);
-    auto en = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duratio = en - star;
-    std::cout << "Time: " << duratio.count() << " sec" << std::endl;
 
-    cout << vys << std::endl;
+    int del = zac.size();
+    int del2 = zac[1].size();
 
-    return 0;
+    depthsearch(zac);
+  
+
 
 }
